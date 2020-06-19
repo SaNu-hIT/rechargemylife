@@ -173,7 +173,19 @@ router.post(
             const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch)
           return res.status(400).json({
-              status: "1001" , message: "Incorrect Password !",token:"",userId:""
+
+            Response:{
+              Status:{
+                statusCode:"2001",statusMessage:"Incorrect Password !"
+              },
+              Data:{
+
+              }
+
+
+
+            }
+
           });
             const payload = {
                 user: {
@@ -192,7 +204,22 @@ router.post(
                 },
                 (err, token) => {
                     if (err) throw err;
-                      res.status(200).json({status:"200", message: "Login success!",token:token,userId:user.id
+                      res.status(200).json({
+
+
+                        Response:{
+                          Status:{
+                            statusCode:"200",statusMessage:"Login success!"
+                          },
+                          Data:{
+                            token:token,userId:user.id
+                          }
+
+
+
+                        }
+
+                      
                     });
                 }
             );
