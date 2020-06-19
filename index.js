@@ -21,7 +21,7 @@ InitiateTokenServese();
 //for create shope with phone,name,password
 app.use("/shop", shops);
 //for login as shop username
-//get
+
 app.use("/recharge", recharge);
 
 app.use("/operators", operators);

@@ -173,7 +173,7 @@ router.post(
             const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch)
           return res.status(400).json({
-            message: "Incorrect Password !"
+              status: "1001" , message: "Incorrect Password !"
           });
             const payload = {
                 user: {
@@ -192,7 +192,7 @@ router.post(
                 },
                 (err, token) => {
                     if (err) throw err;
-                    res.status(200).json({status:"success",toke:token,userId:user.id
+                      res.status(200).json({status:"200", message: "Login success!",token:token,userId:user.id
                     });
                 }
             );
