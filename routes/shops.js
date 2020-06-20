@@ -149,7 +149,7 @@ router.post(
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({
+            return res.status(1002).json({
                 errors: errors.array()
             });
         }
@@ -163,6 +163,7 @@ router.post(
             let user = await Shops.findOne({
                 phone
             });
+
             if (!user) {
                 return res.status(200).json({
           Data : {},Message:"User not found !",Status:"1001",Token:"tokkens"
