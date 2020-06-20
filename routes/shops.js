@@ -172,19 +172,15 @@ router.post(
 
             const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch)
-          return res.status(400).json({
-
-            Response:{
-              Status:{
-                statusCode:"2001",statusMessage:"Incorrect Password !"
-              },
-              Data:{
-
-              }
+          return res.status(401).json({
 
 
 
-            }
+
+Data : {},Message:"Incorrect Password !",Status:"400",Token:"tokkens"
+
+
+
 
           });
             const payload = {
@@ -205,21 +201,8 @@ router.post(
                 (err, token) => {
                     if (err) throw err;
                       res.status(200).json({
+                        Data : {user_id:user.id},Message:"Login success!!",Status:"200",Token:"tokkens"
 
-
-                        Response:{
-                          Status:{
-                            statusCode:"200",statusMessage:"Login success!"
-                          },
-                          Data:{
-                            token:token,userId:user.id
-                          }
-
-
-
-                        }
-
-                      
                     });
                 }
             );
