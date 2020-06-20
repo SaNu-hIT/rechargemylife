@@ -147,33 +147,30 @@ router.post(
           })
     ],
     async (req, res) => {
-        // const errors = validationResult(req);
-        // if (!errors.isEmpty()) {
-        //     return res.status(400).json({
-        //         errors: errors.array()
-        //     });
-        // }
-
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                errors: errors.array()
+            });
+        }
         const {
             username,
             password,device_token
         } = req.body;
-
-
         try {
             let user = await Shops.findOne({
                 username
             });
             if (!user) {
                 return res.status(200).json({
-          Data : {},Message:"User not foun!",Status:"400",Token:"tokkens"
+          Data : {},Message:"User not found !",Status:"1001",Token:"tokkens"
                 });
             }
 
             const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch)
           return res.status(200).json({
-Data : {},Message:"Incorrect Password !",Status:"400",Token:"tokkens"
+Data : {},Message:"Incorrect Password !",Status:"1002",Token:"tokkens"
 
           });
             const payload = {
@@ -194,8 +191,7 @@ Data : {},Message:"Incorrect Password !",Status:"400",Token:"tokkens"
                 (err, token) => {
                     if (err) throw err;
                       res.status(200).json({
-                        Data : {user_id:user.id},Message:"Login success!!",Status:"200",Token:"tokkens"
-
+                        Data : {user_id:user.id},Message:"Login success!!",Status:"1000",Token:"tokkens"
                     });
                 }
             );
