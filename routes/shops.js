@@ -165,14 +165,14 @@ router.post(
                 username
             });
             if (!user) {
-                return res.status(1001).json({
+                return res.status(200).json({
           Data : {},Message:"User not foun!",Status:"400",Token:"tokkens"
                 });
             }
 
             const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch)
-          return res.status(401).json({
+          return res.status(200).json({
 Data : {},Message:"Incorrect Password !",Status:"400",Token:"tokkens"
 
           });
