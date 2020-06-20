@@ -134,7 +134,7 @@ router.get(
         }
     }
 );
-router.get(
+router.post(
     "/shoplogin",
     [
         check("username", "Please Enter a Valid Username")
@@ -147,12 +147,12 @@ router.get(
           })
     ],
     async (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({
-                errors: errors.array()
-            });
-        }
+        // const errors = validationResult(req);
+        // if (!errors.isEmpty()) {
+        //     return res.status(400).json({
+        //         errors: errors.array()
+        //     });
+        // }
 
         const {
             username,
