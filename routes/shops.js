@@ -134,7 +134,7 @@ router.get(
         }
     }
 );
-router.post(
+router.get(
     "/shoplogin",
     [
         check("username", "Please Enter a Valid Username")
@@ -166,7 +166,7 @@ router.post(
             });
             if (!user) {
                 return res.status(400).json({
-          Data : {},Message:"User not found!",Status:"400",Token:"tokkens"
+          Data : {},Message:"User not foun!",Status:"400",Token:"tokkens"
                 });
             }
 
