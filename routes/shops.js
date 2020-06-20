@@ -158,8 +158,10 @@ router.post(
             password,device_token
         } = req.body;
         try {
+
+          var phone = username
             let user = await Shops.findOne({
-                username
+                phone
             });
             if (!user) {
                 return res.status(200).json({
