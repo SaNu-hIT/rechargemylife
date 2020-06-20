@@ -137,12 +137,12 @@ router.get(
 router.post(
     "/shoplogin",
     [
-        check("phone", "Please Enter a Valid Username")
+        check("username", "Please Enter a Valid Username")
         .not()
         .isEmpty(),
         check("password", "Please enter a valid password").isLength({
             min: 6
-        }),  check("phoneId", "Please enter a valid password").isLength({
+        }),  check("device_token", "Please enter a valid password").isLength({
               min: 6
           })
     ],
@@ -155,14 +155,14 @@ router.post(
         }
 
         const {
-            phone,
-            password,phoneId
+            username,
+            password,device_token
         } = req.body;
 
 
         try {
             let user = await Shops.findOne({
-                phone
+                username
             });
             if (!user) {
                 return res.status(400).json({
@@ -173,14 +173,7 @@ router.post(
             const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch)
           return res.status(401).json({
-
-
-
-
 Data : {},Message:"Incorrect Password !",Status:"400",Token:"tokkens"
-
-
-
 
           });
             const payload = {
@@ -189,7 +182,7 @@ Data : {},Message:"Incorrect Password !",Status:"400",Token:"tokkens"
                 }
             };
 
-            user.phoneId = phoneId
+            user.device_token = device_token
 
             await user.update();
 
