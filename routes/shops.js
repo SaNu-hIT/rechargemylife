@@ -165,7 +165,7 @@ router.post(
                 username
             });
             if (!user) {
-                return res.status(400).json({
+                return res.status(1001).json({
           Data : {},Message:"User not foun!",Status:"400",Token:"tokkens"
                 });
             }
