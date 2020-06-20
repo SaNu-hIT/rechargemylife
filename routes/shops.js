@@ -166,7 +166,7 @@ router.post(
             });
             if (!user) {
                 return res.status(400).json({
-                    msg: "User Not Exists"
+          Data : {},Message:"User not found!",Status:"400",Token:"tokkens"
                 });
             }
 
