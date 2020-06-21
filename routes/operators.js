@@ -15,7 +15,7 @@ const InitiateTokenServese = require("../config/getToken");
  * @param - /signup
  * @description - User SignUp
  */
-router.get(
+router.post(
     "/operators",
     [
         check("phone", "Please Enter a Valid Username")
