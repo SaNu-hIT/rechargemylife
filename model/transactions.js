@@ -48,6 +48,10 @@ const RechargeSchema = mongoose.Schema({
     type: String,
     required: false
   },
+  logoUrl: {
+    type: String,
+    required: false
+  },
   success: {
     type: Boolean(),
     required: false
