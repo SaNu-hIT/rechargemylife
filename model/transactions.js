@@ -2,31 +2,27 @@ const mongoose = require("mongoose");
 const RechargeSchema = mongoose.Schema({
   operatorId: {
     type: String,
-    required: true
-  },
-  transactionId: {
-    type: String,
-    required: true
+    required: false
   },
   operatorName: {
     type: String,
-    required: true
+    required: false
   },
   shopId: {
     type: String,
-    required: true
+    required: false
   },
   discount: {
     type: String,
-    required: true
+    required: false
   },
   amount: {
     type: String,
-    required: true
+    required: false
   },
   customIdentifier: {
     type: String,
-    required: true
+    required: false
   },
   recipientPhone: {
     type: String,
@@ -38,15 +34,15 @@ const RechargeSchema = mongoose.Schema({
   },
   recipientNumber: {
     type: String,
-    required: true
+    required: false
   },
   senderPhone: {
     type: String,
-    required: true
+    required: false
   },
   senderCountryCode: {
     type: String,
-    required: true
+    required: false
   },
   senderNumber: {
     type: String,

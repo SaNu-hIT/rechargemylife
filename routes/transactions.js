@@ -23,28 +23,18 @@ router.get(
 
     ],
     async (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({
-                errors: errors.array()
-            });
-        }
 
         const {
             shopId
         } = req.body;
-
         try {
-            let user = await Transaction.find({
+            let transactions= await Transaction.find({
                 shopId
             });
-            if (!user) {
-                return res.status(400).json({
-                    msg: "User Not Exists"
-                });
-            }
-            res.status(200).json({status:"success",
-            data : user});
+
+    res.status(200).json({
+          Data : {transactions},Message:"Recharge success",Status:"1000",Token:"tokkens"
+  });
 
         } catch (err) {
             console.log(err.message);
@@ -63,12 +53,7 @@ router.get(
 
     ],
     async (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({
-                errors: errors.array()
-            });
-        }
+
 
         const {
             shopId

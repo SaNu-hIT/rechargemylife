@@ -194,7 +194,7 @@ Data : {},Message:"Incorrect Password !",Status:"1002",Token:"tokkens"
                 (err, token) => {
                     if (err) throw err;
                       res.status(200).json({
-                        Data : {user_id:user.id},Message:"Login success!!",Status:"1000",Token:"tokkens"
+                        Data : {user_id:user.id,phone:user.phone},Message:"Login success !",Status:"1000",Token:"tokkens"
                     });
                 }
             );
