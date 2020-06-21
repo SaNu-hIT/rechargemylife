@@ -14,7 +14,7 @@ const Wallet = require("../model/wallet");
  * @param - /signup
  * @description - User SignUp
  */
-router.get(
+router.post(
     "/gettransactions",
     [
         check("shopId", "Please Enter a Valid shop Id")
