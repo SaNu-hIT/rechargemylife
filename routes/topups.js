@@ -33,7 +33,7 @@ router.post(
             recipientNumber,
             senderPhone,
             senderCountryCode,
-            senderNumber} = req.body;
+            senderNumber,logoUrl} = req.body;
 
         var success = false
         var   recharge = new RechargeSchema({
@@ -48,7 +48,7 @@ router.post(
           recipientNumber,
           senderPhone,
           senderCountryCode,
-          senderNumber,
+          senderNumber,logoUrl,
           success
           });
 

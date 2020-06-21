@@ -44,9 +44,7 @@ if(token)
       "Authorization": "Bearer " + access_token,
       "Accept": "application/com.reloadly.topups-v1+json"
     }
-
       console.log(headers);
-
     fetch(url, { method: 'GET', headers: headers})
       .then((res) => {
          return res.json()
