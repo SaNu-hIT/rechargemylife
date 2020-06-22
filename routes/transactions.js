@@ -44,7 +44,7 @@ router.post(
 );
 
 
-router.get(
+router.post(
     "/getwallet",
     [
         check("shopId", "Please Enter a Valid shop Id")
@@ -64,8 +64,13 @@ router.get(
                 shopId
             });
 
-            res.status(200).json({status:"success",
-            data : wallet});
+
+
+                res.status(200).json({
+                      Data : {wallet},Message:"success",Status:"1000",Token:"tokkens"
+              });
+
+
 
         } catch (err) {
             console.log(err.message);
