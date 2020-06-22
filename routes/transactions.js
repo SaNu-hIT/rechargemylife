@@ -54,7 +54,6 @@ router.post(
     ],
     async (req, res) => {
 
-
         const {
             shopId
         } = req.body;
@@ -68,6 +67,59 @@ router.post(
 
                 res.status(200).json({
                       Data : {wallet},Message:"success",Status:"1000",Token:"tokkens"
+              });
+
+
+
+        } catch (err) {
+            console.log(err.message);
+            res.status(500).send("Error getting data ");
+        }
+    }
+);
+
+router.post(
+    "/addWalletAmount",
+    [
+
+    ],
+    async (req, res) => {
+
+        const {
+            shopId,amount
+        } = req.body;
+
+        try {
+            let wallet = await Wallet.findOne({
+                shopId
+            });
+            if(wallet)
+            {
+
+              var amo = Number(amount)
+              var balacneamount = wallet.wallet_balance
+              var updateAmount = balacneamount + amo
+              wallet.wallet_balance = updateAmount
+
+
+    console.log(wallet._id,typeof wallet._id);
+
+    await Wallet.updateOne({ _id: wallet._id },{ $set: wallet});
+
+            }
+else{
+let wallet_amount = amount
+let wallet_balance = amount
+  let wallet = new Wallet({shopId,wallet_amount,wallet_balance
+          });
+console.log( "SAVE");
+  await wallet.save();
+
+}
+
+
+                res.status(200).json({
+                      Data : {},Message:"success",Status:"1000",Token:"tokkens"
               });
 
 

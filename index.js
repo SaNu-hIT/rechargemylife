@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 // Initiate Mongo Server
 InitiateMongoServer();
 
-InitiateTokenServese();
+// InitiateTokenServese();
 
 //for create shope with phone,name,password
 app.use("/shop", shops);

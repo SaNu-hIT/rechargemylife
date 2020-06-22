@@ -2,14 +2,14 @@ const mongoose = require("mongoose");
 const WalletSchema = mongoose.Schema({
   shopId: {
     type: String,
-    required: true
+    required: false
   },
   wallet_amount: {
-    type: String,
-    required: true
+    type: Number,
+    required: false
   },
   wallet_balance: {
-    type: String,
+    type: Number,
     required: false
   },
   createdAt: {
