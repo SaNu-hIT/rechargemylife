@@ -62,14 +62,9 @@ router.post(
             let wallet = await Wallet.find({
                 shopId
             });
-
-
-
                 res.status(200).json({
                       Data : {wallet},Message:"success",Status:"1000",Token:"tokkens"
               });
-
-
 
         } catch (err) {
             console.log(err.message);
@@ -81,7 +76,6 @@ router.post(
 router.post(
     "/addWalletAmount",
     [
-
     ],
     async (req, res) => {
 
