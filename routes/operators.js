@@ -1,5 +1,3 @@
-// Filename : user.js
-
 const express = require("express");
 const { check, validationResult} = require("express-validator/check");
 const bcrypt = require("bcryptjs");
@@ -10,7 +8,7 @@ const TokenSchema = require("../model/token");
 const PlansSchema = require("../model/plans");
 const request = require('request');
 const fetch = require('node-fetch');
-const InitiateTokenServese = require("../config/getToken");
+
 /**
  * @method - POST
  * @param - /signup
@@ -29,7 +27,7 @@ router.post(
               phone
           } = req.body;
 
-InitiateTokenServese();
+// InitiateTokenServese();
 
 
 let token = await TokenSchema.find({
