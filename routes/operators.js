@@ -73,6 +73,7 @@ router.post(
 
               let operators = await OperatorsSchema.find({
               });
+
                   res.status(200).json({
                         Data : {operators},Message:"success",Status:"1000",Token:"tokkens"
                 });
@@ -123,17 +124,18 @@ router.post(
               operator
           } = req.body;
 
-let plans
-if (operator=="")
-{
-   plans = await PlansSchema.find({
-  });
-}else
-{
 let plans = await PlansSchema.find({
-  operator
 });
-}
+// if (operator=="")
+// {
+//    plans = await PlansSchema.find({
+//   });
+// }else
+// {
+// let plans = await PlansSchema.find({
+//   operator
+// });
+// }
 
 if(plans)
 {
