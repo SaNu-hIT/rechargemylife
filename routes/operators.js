@@ -6,12 +6,13 @@ const router = express.Router();
 const Shops = require("../model/shops");
 const TokenSchema = require("../model/token");
 const PlansSchema = require("../model/plans");
+const OperatorsSchema = require("../model/operators");
 const request = require('request');
 const fetch = require('node-fetch');
 
 /**
  * @method - POST
- * @param - /signup
+ * @param - /operators
  * @description - User SignUp
  */
 router.post(
@@ -26,10 +27,6 @@ router.post(
           const {
               phone
           } = req.body;
-
-// InitiateTokenServese();
-
-
 let token = await TokenSchema.find({
 });
 
@@ -64,13 +61,61 @@ if(token)
     }
 );
 
+router.post(
+    "/alloperators",
+    [
+    ],
+    async (req, res) => {
+        try {
+          const {
+              phone
+          } = req.body;
+
+              let operators = await OperatorsSchema.find({
+              });
+                  res.status(200).json({
+                        Data : {operators},Message:"success",Status:"1000",Token:"tokkens"
+                });
+
+
+        } catch (err) {
+            console.log(err.message);
+            res.status(500).send("Error in Saving");
+        }
+    }
+);
+
+router.post(
+    "/addOperators",
+    [
+    ],
+    async (req, res) => {
+        try {
+
+          const {
+              name,operatorId,logoUrls
+          } = req.body;
+
+
+
+var operator = new OperatorsSchema({
+      name,operatorId,logoUrls
+});
+await operator.save();
+res.status(200).json({
+      Data : {operator},Message:"operator added success",Status:"1000",Token:"tokkens"
+});
+
+        } catch (err) {
+            console.log(err.message);
+            res.status(500).send("Error in Saving");
+        }
+    }
+);
 
 router.post(
     "/getPlans",
     [
-        check("operator", "Please Enter operators")
-        .not()
-        .isEmpty()
     ],
     async (req, res) => {
         try {
@@ -78,9 +123,17 @@ router.post(
               operator
           } = req.body;
 
+let plans
+if (operator=="")
+{
+   plans = await PlansSchema.find({
+  });
+}else
+{
 let plans = await PlansSchema.find({
   operator
 });
+}
 
 if(plans)
 {
@@ -91,7 +144,7 @@ if(plans)
 }
 else{
   res.status(200).json({
-        Data : {plans},Message:"no plans found",Status:"1001",Token:"tokkens"
+        Data : {plans},Message:"No plans found",Status:"1001",Token:"tokkens"
   });
 
 }
@@ -121,7 +174,7 @@ var plans = new PlansSchema({
 });
 await plans.save();
 res.status(200).json({
-      Data : {plans},Message:"operator added success",Status:"1000",Token:"tokkens"
+      Data : {plans},Message:"Plans added success",Status:"1000",Token:"tokkens"
 });
 
         } catch (err) {
@@ -130,5 +183,7 @@ res.status(200).json({
         }
     }
 );
+
+
 
 module.exports = router;

@@ -58,7 +58,7 @@ router.post(
       res.status(200).json({
         Data : {},Message:"Recharge success",Status:"1000",Token:"tokkens"
     });
-//
+
 //           var url ='https://topups.reloadly.com/topups';
 //           var headers = {
 //             "Content-Type": "application/json",
@@ -77,18 +77,30 @@ router.post(
 //   'amount': amount,
 //   'customIdentifier': customIdentifier
 // });
-
-          //
-          // fetch(url, { method: 'POST', headers: headers, body: body})
-          //   .then((res) => {
-          //      return res.json()
-          // })
-          // .then((json) => {
-          //   console.log("JSON"+json);
-          //   // Do something with the returned data.
-          //   res.status(200).json(json);
-          //
-          // });
+//
+//
+//           fetch(url, { method: 'POST', headers: headers, body: body})
+//             .then((res) => {
+// (
+//
+//
+// var jsonres = res.json()
+//
+//                return res.json()
+//
+//
+//
+//
+//
+//
+//
+//           })
+//           .then((json) => {
+//             console.log("JSON"+json);
+//             // Do something with the returned data.
+//             res.status(200).json(json);
+//
+//           });
 
 
 
