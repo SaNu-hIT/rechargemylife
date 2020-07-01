@@ -53,7 +53,7 @@ const RechargeSchema = mongoose.Schema({
     required: false
   },
   success: {
-    type: Boolean(),
+    type: Boolean,
     required: false
   },
   date: {

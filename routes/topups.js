@@ -46,6 +46,29 @@ router.post(
         logoUrl
       } = req.body;
       var success = false
+
+
+      // success = true
+      var recharge = new RechargeSchema({
+        operatorId,
+        operatorName,
+        shopId,
+        discount,
+        amount,
+        customIdentifier,
+        recipientPhone,
+        recipientCountryCode,
+        recipientNumber,
+        senderPhone,
+        senderCountryCode,
+        senderNumber,
+        logoUrl,
+        success
+      });
+      recharge.save();
+
+
+
       if (token) {
         var access_toke = token.access_token
         var url = 'https://topups.reloadly.com/topups';
