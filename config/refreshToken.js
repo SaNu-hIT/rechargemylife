@@ -11,6 +11,8 @@ const request = require('request');
 const fetch = require('node-fetch');
 const refreshToken = async () => {
   try {
+
+    console.log("call refresh TOKEN");
     var access_ids = "recharge"
     var access_id = access_ids
     let token = await TokenSchema.findOne({

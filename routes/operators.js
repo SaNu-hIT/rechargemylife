@@ -54,7 +54,7 @@ router.post(
           .then((json) => {
             console.log(json);
             // Do something with the returned data.
-            if (json.errorCode == "INVALID_TOKEN") {
+            if (json.errorCode == "INVALID_TOKEN" || json.errorCode == "TOKEN_EXPIRED") {
               //refreshToken
               refreshToken()
               res.status(200).json({
@@ -129,7 +129,8 @@ router.post(
       const {
         name,
         operatorId,
-        logoUrls
+        logoUrls,
+        type
       } = req.body;
 
 
@@ -137,7 +138,8 @@ router.post(
       var operator = new OperatorsSchema({
         name,
         operatorId,
-        logoUrls
+        logoUrls,
+        type
       });
       await operator.save();
       res.status(200).json({

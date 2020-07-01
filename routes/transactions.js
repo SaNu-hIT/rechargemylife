@@ -33,6 +33,8 @@ router.post(
     try {
       let transactions = await Transaction.find({
         shopId
+      }).sort({
+        date: -1
       });
 
       res.status(200).json({
