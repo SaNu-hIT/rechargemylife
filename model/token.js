@@ -2,15 +2,19 @@ const mongoose = require("mongoose");
 const TokenSchema = mongoose.Schema({
   access_token: {
     type: String,
-    required: true
+    required: false
+  },
+  access_id: {
+    type: String,
+    required: false
   },
   scope: {
     type: String,
-    required: true
+    required: false
   },
   expires_in: {
     type: String,
-    required: true
+    required: false
   },
   token_type: {
     type: String,

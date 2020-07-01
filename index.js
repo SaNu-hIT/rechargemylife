@@ -3,7 +3,8 @@ var app = express();
 app.use(express.static('public'));
 const bodyParser = require("body-parser");
 const InitiateMongoServer = require("./config/db");
-const InitiateTokenServese = require("./config/getToken");
+const refreshToken = require("./config/refreshToken");
+
 const shops = require("./routes/shops");
 
 const recharge = require("./routes/recharge");
@@ -15,8 +16,6 @@ const distributor = require("./routes/distributor");
 app.use(bodyParser.json());
 // Initiate Mongo Server
 InitiateMongoServer();
-
-// InitiateTokenServese();
 
 //for create shope with phone,name,password
 app.use("/shop", shops);
@@ -38,6 +37,6 @@ app.use("/distributor", distributor);
 // });
 
 
-app.listen(process.env.PORT || 3000, function(){
+app.listen(process.env.PORT || 3000, function() {
   console.log('listening on ports');
 });

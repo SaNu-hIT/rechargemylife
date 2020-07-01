@@ -4,10 +4,10 @@ const mongoose = require("mongoose");
 // mongodb+srv://root:<password>@recharge-9yeed.mongodb.net/<dbname>?retryWrites=true&w=majority
 const MONGOURI = "mongodb+srv://root:root@recharge-9yeed.mongodb.net/recharge?retryWrites=true&w=majority";
 const InitiateMongoServer = async () => {
-    await mongoose.connect(MONGOURI, {
-      useNewUrlParser: true
-    });
-    console.log("Connected to DB !!");
+  await mongoose.connect(MONGOURI, {
+    useNewUrlParser: true
+  });
+  console.log("Connected to DB !!");
 
 };
 module.exports = InitiateMongoServer;
