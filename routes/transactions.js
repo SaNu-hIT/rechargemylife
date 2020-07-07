@@ -53,6 +53,40 @@ router.post(
   }
 );
 
+router.post(
+  "/getwallet",
+  [
+    check("shopId", "Please Enter a Valid shop Id")
+    .not()
+    .isEmpty()
+
+  ],
+  async (req, res) => {
+
+    const {
+      shopId
+    } = req.body;
+
+    try {
+      let wallet = await Wallet.find({
+        shopId
+      });
+      res.status(200).json({
+        Data: {
+          wallet
+        },
+        Message: "success",
+        Status: "1000",
+        Token: "tokkens"
+      });
+
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send("Error getting data ");
+    }
+  }
+);
+
 
 router.post(
   "/getwallet",
@@ -117,6 +151,7 @@ router.post(
         }, {
           $set: wallet
         });
+
 
       } else {
         let wallet_amount = amount

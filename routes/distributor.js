@@ -9,7 +9,9 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
 const Distributor = require("../model/distributor");
-
+const Wallet = require("../model/wallet");
+const ShopWallet = require("../model/shopwalletall");
+const Shops = require("../model/shops");
 /**
  * @method - POST
  * @param - /createdistributor
@@ -18,42 +20,34 @@ const Distributor = require("../model/distributor");
 router.post(
   "/createdistributor",
   [
-    check("username", "Please Enter a Valid Username")
-    .not()
-    .isEmpty(),
-    check("phone", "Please enter a valid phone").not().isEmpty(),
-    check("password", "Please enter a valid password").isLength({
-      min: 6
-    }), check("distributorId", "Please enter a valid phone").not().isEmpty(),
+
   ],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        errors: errors.array()
-      });
-    }
+
     const {
       username,
       phone,
       password,
-      distributorId
+      distributorId,
+      commision
     } = req.body;
     try {
+
       if (distributorId == "") {
         let user = await Distributor.findOne({
           phone
         });
         if (user) {
           return res.status(400).json({
-            msg: "User Already Exists"
+            msg: "distributor Already Exists"
           });
         }
 
         user = new Distributor({
           username,
           phone,
-          password
+          password,
+          commision
         });
 
         const salt = await bcrypt.genSalt(10);
@@ -73,40 +67,34 @@ router.post(
           (err, token) => {
             if (err) throw err;
             res.status(200).json({
-              token: token,
-              message: "Shops create success"
+              status: "success",
+              statusCode: "200",
+              message: "Disributor create success"
             });
+
           }
         );
       } else {
-
+        var _id = distributorId
         let user = await Distributor.findOne({
-          phone
+          _id
         });
+
         user.username = username
         user.phone = phone
-        const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(password, salt);
-        await user.update();
-        const payload = {
-          user: {
-            id: user.id
-          }
-        };
+        user.commision = commision
+        await Distributor.updateOne({
+          _id: user._id
+        }, {
+          $set: user
+        });
 
-        jwt.sign(
-          payload,
-          "randomString", {
-            expiresIn: 10000
-          },
-          (err, token) => {
-            if (err) throw err;
-            res.status(200).json({
-              token: token,
-              message: "Shops update success"
-            });
-          }
-        );
+        res.status(200).json({
+          status: "success",
+          statusCode: "200",
+          message: "Disributor update success"
+        });
+
 
       }
 
@@ -118,18 +106,10 @@ router.post(
 );
 
 
-router.get(
+router.post(
   "/getdistributors",
-  [
-
-  ],
+  [],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        errors: errors.array()
-      });
-    }
 
 
     try {
@@ -137,6 +117,8 @@ router.get(
 
       res.status(200).json({
         status: "success",
+        statusCode: "200",
+        message: "Shops update success",
         data: distributor
       });
 
@@ -150,16 +132,9 @@ router.get(
 
 router.get(
   "/getdistributor",
-  [
-    check("distributorId", "Please enter a valid id").not().isEmpty(),
-  ],
+  [],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        errors: errors.array()
-      });
-    }
+
 
     const {
       distributorId
@@ -185,43 +160,39 @@ router.get(
 router.post(
   "/distributorlogin",
   [
-    check("phone", "Please Enter a Valid Username")
-    .not()
-    .isEmpty(),
-    check("password", "Please enter a valid password").isLength({
-      min: 6
-    }), check("phoneId", "Please enter a valid password").isLength({
-      min: 6
-    })
+
   ],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        errors: errors.array()
-      });
-    }
+
 
     const {
       phone,
-      password,
-      phoneId
+      password
     } = req.body;
 
 
     try {
-      let user = await Shops.findOne({
+      let user = await Distributor.findOne({
         phone
       });
       if (!user) {
-        return res.status(400).json({
-          msg: "User Not Exists"
+        return res.status(202).json({
+          status: "Fialed",
+          statusCode: "500",
+          token: "",
+          message: "User not found",
+          userId: ""
+
         });
       }
 
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch)
-        return res.status(400).json({
+        return res.status(202).json({
+          status: "Fialed",
+          statusCode: "500",
+          token: "",
+          userId: "",
           message: "Incorrect Password !"
         });
       const payload = {
@@ -230,9 +201,9 @@ router.post(
         }
       };
 
-      user.phoneId = phoneId
-
-      await user.update();
+      // user.phoneId = phoneId
+      //
+      // await user.update();
 
       jwt.sign(
         payload,
@@ -243,7 +214,9 @@ router.post(
           if (err) throw err;
           res.status(200).json({
             status: "success",
-            toke: token,
+            statusCode: "200",
+            token: token,
+            message: "Login success",
             userId: user.id
           });
         }
@@ -254,6 +227,255 @@ router.post(
     }
   }
 );
+
+
+router.post(
+  "/deleteDistriutorbyId",
+  [],
+  async (req, res) => {
+    const {
+      distributorId
+    } = req.body;
+
+    try {
+      var _id = distributorId
+      let shops = await Distributor.findOne({
+        _id
+      });
+      if (shops) {
+        shops.remove()
+        res.status(200).json({
+          status: "success",
+          statusCode: "200",
+          message: "distributor deleted success"
+        });
+      } else {
+        res.status(200).json({
+          status: "success",
+          statusCode: "200",
+          message: "distributor deleted failed"
+        });
+      }
+
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send("Error getting data ");
+    }
+  }
+);
+
+
+
+router.post(
+  "/getdistributor",
+  [],
+  async (req, res) => {
+    const {
+      distributorId
+    } = req.body;
+    var _id = distributorId
+    try {
+      let shops = await Distributor.findOne({
+        _id
+      });
+      if (shops) {
+        res.status(200).json({
+          status: "success",
+          statusCode: "200",
+          message: "Distributor get success",
+          data: shops
+        });
+      } else {
+        res.status(200).json({
+          status: "success",
+          statusCode: "200",
+          message: "No shop found",
+          data: null
+        });
+      }
+
+
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send("Error getting data ");
+    }
+  }
+);
+
+
+
+router.post(
+  "/addWalletAmount",
+  [],
+  async (req, res) => {
+
+    const {
+      shopId,
+      amount,
+      distributorId
+    } = req.body;
+
+    try {
+      var _id = shopId
+
+      let shop = await Shops.findOne({
+        _id
+      });
+
+      if (shop) {
+
+        let wallet = await Wallet.findOne({
+          shopId
+        });
+        if (wallet) {
+          var amo = Number(amount)
+          var balacneamount = wallet.wallet_balance
+          var updateAmount = balacneamount + amo
+          wallet.wallet_balance = updateAmount
+          wallet.distributorId = distributorId
+          wallet.phone = shop.phone
+          console.log(wallet._id, typeof wallet._id);
+          await Wallet.updateOne({
+            _id: wallet._id
+          }, {
+            $set: wallet
+          });
+          var wallet_balance = updateAmount
+
+          var phone = shop.phone
+          var shopWallet = new ShopWallet({
+            shopId,
+            amount,
+            distributorId,
+            phone,
+            wallet_balance
+          });
+          await wallet.save();
+          await shopWallet.save();
+
+        } else {
+          let wallet_amount = amount
+          let wallet_balance = amount
+          let phone = shop.phone
+          let wallet = new Wallet({
+            shopId,
+            wallet_amount,
+            wallet_balance,
+            distributorId,
+            phone
+          });
+          console.log("SAVE");
+          await wallet.save();
+
+
+
+
+          var shopWallet = new ShopWallet({
+            shopId,
+            distributorId,
+            amount,
+            phone,
+            wallet_balance
+          });
+          await shopWallet.save();
+
+        }
+
+
+
+
+
+
+
+        res.status(200).json({
+          Data: {},
+          status: "success",
+          statusCode: "200",
+          message: "Shops get success"
+
+        });
+
+
+
+
+
+      } else {
+
+        res.status(200).json({
+          Data: {},
+          status: "failed",
+          message: "Shop is not available",
+          statusCode: "500"
+        });
+      }
+
+
+
+
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send("Error getting data ");
+    }
+  }
+);
+
+
+
+
+router.post(
+  "/getdistributorWalletTransaction",
+  [],
+  async (req, res) => {
+    const {
+      distributorId
+    } = req.body;
+
+    try {
+      let shops = await Wallet.find({
+        distributorId
+      });
+      res.status(200).json({
+        status: "success",
+        statusCode: "200",
+        message: "Distributor get success",
+        data: shops
+      });
+
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send("Error getting data ");
+    }
+  }
+);
+
+
+
+router.post(
+  "/getAllWalletTranactions",
+  [],
+  async (req, res) => {
+    const {
+      distributorId
+    } = req.body;
+
+    try {
+      let shops = await ShopWallet.find({
+        distributorId
+      });
+      res.status(200).json({
+        status: "success",
+        statusCode: "200",
+        message: "Distributor get success",
+        data: shops
+      });
+
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send("Error getting data ");
+    }
+  }
+);
+
 
 
 module.exports = router;

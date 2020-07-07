@@ -24,6 +24,18 @@ const ShopSchema = mongoose.Schema({
     type: String,
     required: false
   },
+  commision: {
+    type: String,
+    required: false
+  },
+  pincode: {
+    type: String,
+    required: false
+  },
+  distributorId: {
+    type: String,
+    required: false
+  },
   createdAt: {
     type: Date,
     default: Date.now()

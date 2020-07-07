@@ -17,70 +17,108 @@ const Shops = require("../model/shops");
  */
 router.post(
   "/createshops",
-  [
-    check("username", "Please Enter a Valid Username")
-    .not()
-    .isEmpty(),
-    check("phone", "Please enter a valid phone").not().isEmpty(),
-    check("password", "Please enter a valid password").isLength({
-      min: 6
-    }),
-    check("distributorId", "Please enter a valid distributorId").not().isEmpty(),
-  ],
+  [],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        errors: errors.array()
-      });
-    }
+
     const {
       username,
       phone,
       password,
-      distributorId
+      distributorId,
+      pincode,
+      commision,
+      _id
     } = req.body;
     try {
-      let user = await Shops.findOne({
-        phone
-      });
-      if (user) {
-        return res.status(400).json({
-          msg: "User Already Exists"
+
+      if (_id == "") {
+        let user = await Shops.findOne({
+          phone
         });
-      }
-
-      user = new Shops({
-        username,
-        phone,
-        password,
-        distributorId
-      });
-
-      const salt = await bcrypt.genSalt(10);
-      user.password = await bcrypt.hash(password, salt);
-
-      await user.save();
-
-      const payload = {
-        user: {
-          id: user.id
-        }
-      };
-
-      jwt.sign(
-        payload,
-        "randomString", {
-          expiresIn: 10000
-        },
-        (err, token) => {
-          if (err) throw err;
-          res.status(200).json({
-            token: token,
-            message: "Shops create success"
+        if (user) {
+          return res.status(202).json({
+            message: "Shop Already Exists",
+            status: "failed",
+            statusCode: "202"
           });
         }
-      );
+
+        user = new Shops({
+          username,
+          phone,
+          password,
+          distributorId,
+          pincode,
+          commision
+        });
+
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(password, salt);
+        await user.save();
+
+        const payload = {
+          user: {
+            id: user.id
+          }
+        };
+
+        jwt.sign(
+          payload,
+          "randomString", {
+            expiresIn: 10000
+          },
+          (err, token) => {
+            if (err) throw err;
+            res.status(200).json({
+              status: "success",
+              statusCode: "200",
+              message: "Shops create success"
+            });
+          }
+        );
+
+
+
+      } else {
+        let user = await Shops.findOne({
+          _id
+        });
+        if (user) {
+
+          //   username,
+          //   phone,
+          //   password,
+          //   distributorId,
+          //   pincode,
+          //   commision
+          user.username = username
+          user.phone = phone
+          user.commision = commision
+          user.pincode = pincode
+          // await user.update({
+          //   _id
+          // });
+
+
+          await Shops.updateOne({
+            _id: user._id
+          }, {
+            $set: user
+          });
+
+          res.status(200).json({
+            status: "success",
+            statusCode: "200",
+            message: "Shops update success"
+          });
+
+
+
+        }
+
+
+
+      }
     } catch (err) {
       console.log(err.message);
       res.status(500).send("Error in Saving");
@@ -93,12 +131,7 @@ router.get(
 
   ],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        errors: errors.array()
-      });
-    }
+
     try {
       let shops = await Shops.find({});
       res.status(200).json({
@@ -114,29 +147,22 @@ router.get(
 );
 
 
-router.get(
+router.post(
   "/getshop",
-  [
-    check("shopId", "Please enter a valid id").not().isEmpty(),
-  ],
+  [],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        errors: errors.array()
-      });
-    }
-
     const {
       shopId
     } = req.body;
-
+    var _id = shopId
     try {
       let shops = await Shops.findOne({
-        shopId
+        _id
       });
       res.status(200).json({
         status: "success",
+        statusCode: "200",
+        message: "Shops get success",
         data: shops
       });
 
@@ -146,6 +172,73 @@ router.get(
     }
   }
 );
+
+
+router.post(
+  "/getshopBydistributor",
+  [],
+  async (req, res) => {
+    const {
+      distributorId
+    } = req.body;
+
+    try {
+      let shops = await Shops.find({
+        distributorId
+      });
+      res.status(200).json({
+        status: "success",
+        statusCode: "200",
+        data: shops
+      });
+
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send("Error getting data ");
+    }
+  }
+);
+
+router.post(
+  "/deleteShopbyId",
+  [],
+  async (req, res) => {
+    const {
+      shopId
+    } = req.body;
+
+    try {
+
+      var _id = shopId
+      let shops = await Shops.findOne({
+        _id
+      });
+
+
+      if (shops) {
+        shops.remove()
+        res.status(200).json({
+          status: "success",
+          statusCode: "200",
+          message: "Shop deleted success"
+        });
+      } else {
+
+
+        res.status(200).json({
+          status: "success",
+          statusCode: "200",
+          message: "Shop deleted failed"
+        });
+      }
+
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send("Error getting data ");
+    }
+  }
+);
+
 router.post(
   "/shoplogin",
   [
@@ -201,9 +294,9 @@ router.post(
         }
       };
 
-      user.device_token = device_token
+      // user.device_token = device_token
 
-      await user.update();
+      // await user.update();
 
       jwt.sign(
         payload,
