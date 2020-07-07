@@ -170,18 +170,19 @@
         },
         {
           data: "wallet_balance"
-        },
-        {
-          data: null,
-          render: function(data, row, type) {
-            var html = '<div role="group" aria-label="Basic example" class="btn-group btn-group-sm alignclass">';
-            html += '<button type="button" data_id=' + data._id + ' class="btnEdit btn btn-outline-success"><i class="ti-pencil"></i></button>';
-            html += '<button type="button" data_id=' + data._id + '  class="btnDelete btn btn-outline btn-danger"><i class="ti-trash"></i></button>';
-            html += '</div>';
-            return html;
-          },
-          "bSortable": false
         }
+        // ,
+        // {
+        //   data: null,
+        //   render: function(data, row, type) {
+        //     var html = '<div role="group" aria-label="Basic example" class="btn-group btn-group-sm alignclass">';
+        //     html += '<button type="button" data_id=' + data._id + ' class="btnEdit btn btn-outline-success"><i class="ti-pencil"></i></button>';
+        //     html += '<button type="button" data_id=' + data._id + '  class="btnDelete btn btn-outline btn-danger"><i class="ti-trash"></i></button>';
+        //     html += '</div>';
+        //     return html;
+        //   },
+        //   "bSortable": false
+        // }
       ]
 
     });
@@ -621,7 +622,7 @@
                     <!-- <th scope="col">Name</th> -->
                     <th scope="col">Phone</th>
                     <th scope="col">Amount</th>
-                    <th scope="col">Action</th>
+                    <!-- <th scope="col">Action</th> -->
                   </tr>
                 </thead>
                 <tbody class="list">
