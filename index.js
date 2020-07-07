@@ -44,7 +44,7 @@ app.use("/distributor", distributor);
 // for web
 
 app.get('/', function(req, res) {
-  res.sendfile('/login');
+  res.render('login.ejs');
 });
 
 
