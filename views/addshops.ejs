@@ -133,8 +133,6 @@
       var distributorId = user_id
       var shopId = $('#shopId').val();
       if (validateForm(username, phone, pincode, password, commision, distributorId)) {
-
-
         data.username = username; //input
         data.password = password; //input
         data.phone = phone; //input
@@ -251,7 +249,6 @@
             $('#pincode').val(res.data.pincode);
             $('#shopId').val(res.data._id);
             $('#addshops').text("UPDATE");
-
           } else {
             swal("Oops", message, "error");
           }
