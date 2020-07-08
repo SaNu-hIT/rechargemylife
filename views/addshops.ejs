@@ -10,6 +10,8 @@
   <% include /header.ejs%>
 </head>
 <script>
+  var shopCommision
+
   function LoadDataDromDb() {
     var data = {};
     var distributorId = user_id
@@ -30,8 +32,6 @@
         if (statusCode == "200") {
           updateDataTable(res)
         }
-
-
       },
       error: function() {
         console.log("Device control failed");
@@ -73,8 +73,8 @@
           data: null,
           render: function(data, row, type) {
             var html = '<div role="group" aria-label="Basic example" class="btn-group btn-group-sm alignclass">';
-            html += '<button type="button" data_id=' + data._id + ' class="btnEdit btn btn-outline-success"><i class="ti-pencil"></i></button>';
-            html += '<button type="button" data_id=' + data._id + '  class="btnDelete btn btn-outline btn-danger"><i class="ti-trash"></i></button>';
+            html += '<button type="button" data_id=' + data._id + ' class="btnEdit btn btn-outline-success"><i class="ni ni-ruler-pencil"></i></button>';
+            html += '<button type="button" data_id=' + data._id + '  class="btnDelete btn btn-outline-danger  "><i class="ni ni-basket"></i></button>';
             html += '</div>';
             return html;
           },
@@ -114,8 +114,16 @@
     $("#addshops").click(function(e) {
       e.preventDefault();
       console.log("click done");
+
+
+
+
+
       url = "/shop/createshops"
       console.log(url);
+
+
+
       var data = {};
       var username = $('#name').val();
       var password = $('#password').val();
@@ -124,49 +132,56 @@
       var pincode = $('#pincode').val();
       var distributorId = user_id
       var shopId = $('#shopId').val();
-      data.username = username; //input
-      data.password = password; //input
-      data.phone = phone; //input
-      data.distributorId = distributorId; //input
-      data.pincode = pincode; //input
-      data.commision = commision;
-      data._id = shopId; //input
-      console.log(JSON.stringify(data));
-      $.ajax({
-        type: 'POST',
-        data: JSON.stringify(data), //input data to be sent to the server
-        contentType: 'application/json; charset=utf-8',
-        dataType: "json",
-        url: url,
-        success: function(res) {
-          console.log('success');
-          console.log(res);
-          var statusCode = res.statusCode
-          var message = res.message
-          var status = res.status
-          console.log("Message" + message);
-          console.log("status" + status);
-          console.log("statusCode" + statusCode);
-          if (statusCode == "200") {
-            LoadDataDromDb();
-            $('#name').val("");
-            $('#password').val("");
-            $('#phone').val("");
-            $('#commision').val("");
-            $('#pincode').val("");
-            swal("Success", message, "successs");
-          } else {
+      if (validateForm(username, phone, pincode, password, commision, distributorId)) {
 
-            swal("Oops", message, "error");
 
+        data.username = username; //input
+        data.password = password; //input
+        data.phone = phone; //input
+        data.distributorId = distributorId; //input
+        data.pincode = pincode; //input
+        data.commision = commision;
+        data._id = shopId; //input
+        console.log(JSON.stringify(data));
+        $.ajax({
+          type: 'POST',
+          data: JSON.stringify(data), //input data to be sent to the server
+          contentType: 'application/json; charset=utf-8',
+          dataType: "json",
+          url: url,
+          success: function(res) {
+            console.log('success');
+            console.log(res);
+            var statusCode = res.statusCode
+            var message = res.message
+            var status = res.status
+            console.log("Message" + message);
+            console.log("status" + status);
+            console.log("statusCode" + statusCode);
+            if (statusCode == "200") {
+
+              swal("Success", message, "successs");
+              LoadDataDromDb();
+              $('#name').val("");
+              $('#password').val("");
+              $('#phone').val("");
+              $('#commision').val("");
+              $('#pincode').val("");
+
+            } else {
+
+              swal("Oops", message, "error");
+
+            }
+
+
+          },
+          error: function() {
+            console.log("Device control failed");
           }
+        });
+      }
 
-
-        },
-        error: function() {
-          console.log("Device control failed");
-        }
-      });
     });
 
 
@@ -189,8 +204,9 @@
           console.log("status" + status);
           console.log("statusCode" + statusCode);
           if (statusCode == "200") {
-            var commision = res.data.commision
-            $('#distributor_commision').text(commision);
+            shopCommision = res.data.commision
+            $('#distributor_commision').text(shopCommision);
+
           }
 
 
@@ -303,7 +319,47 @@
           }
         });
     });
+
+
+
+
   });
+
+
+
+  function validateForm(name, phone, pincode, password, commision, shop_id) {
+
+    var isvaid = true;
+    if (name == "") {
+      alert("Name  Required");
+      isvaid = false;
+      return isvaid;
+    } else if (phone == "") {
+      alert("Phone Required");
+      isvaid = false;
+      return isvaid;
+    } else if (password == "") {
+      alert("Password Required");
+      isvaid = false;
+      return isvaid;
+    } else if (commision == "") {
+      alert("Commision Required");
+      isvaid = false;
+      return isvaid;
+    } else if (commision > shopCommision) {
+      alert("Commision need to be under " + shopCommision);
+      isvaid = false;
+      return isvaid;
+    } else if (shop_id == "") {
+      alert("Please relogin");
+      isvaid = false;
+      return isvaid;
+    } else {
+      isvaid = true;
+      return isvaid;
+    }
+
+  }
 </script>
 
 <body class="">
@@ -473,7 +529,7 @@
                             <div class="input-group-prepend">
                               <span class="input-group-text">Phone</span>
                             </div>
-                            <input type="text" id="phone" aria-label="Name" class="form-control">
+                            <input type="number" id="phone" aria-label="Phone" class="form-control">
                           </div>
 
                         </span>
@@ -484,7 +540,7 @@
                             <div class="input-group-prepend">
                               <span class="input-group-text">PinCode</span>
                             </div>
-                            <input type="text" id="pincode" aria-label="pincode" class="form-control">
+                            <input type="number" id="pincode" aria-label="pincode" class="form-control">
                           </div>
 
                         </span>
@@ -515,7 +571,7 @@
                       <div class="col-sm">
                         <span>
                           <div class="input-group">
-                            <input type="text" id="commision" class="form-control" aria-label="Commision">
+                            <input type="number" id="commision" class="form-control" aria-label="Commision">
                             <div class="input-group-append">
                               <span class="input-group-text">%</span>
                               <span id="distributor_commision" class="input-group-text"></span>

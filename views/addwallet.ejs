@@ -10,6 +10,24 @@
   <% include /header.ejs%>
 </head>
 <script>
+  function validateForm(amount, shop_id) {
+
+    var isvaid = true;
+    if (shop_id == "Select shop") {
+      alert("Select shop");
+      isvaid = false;
+      return isvaid;
+    } else if (amount == "") {
+      alert("Amount Required");
+      isvaid = false;
+      return isvaid;
+    } else {
+      isvaid = true;
+      return isvaid;
+    }
+
+  }
+
   function LoadDataDromDb() {
     var data = {};
 
@@ -222,42 +240,41 @@
       var amount = $('#amount').val();
       var distributorId = user_id
       var shopId = $('#slect_shop').val();
-
-      data.amount = amount;
-      data.shopId = shopId;
-      data.distributorId = distributorId;
-
-      //input
-      console.log(JSON.stringify(data));
-      $.ajax({
-        type: 'POST',
-        data: JSON.stringify(data), //input data to be sent to the server
-        contentType: 'application/json; charset=utf-8',
-        dataType: "json",
-        url: url,
-        success: function(res) {
-          console.log('success');
-          console.log(res);
-          var statusCode = res.statusCode
-          var message = res.message
-          var status = res.status
-          console.log("Message" + message);
-          console.log("status" + status);
-          console.log("statusCode" + statusCode);
-          if (statusCode == "200") {
-            LoadDataDromDb();
-            $('#shopId').val("");
-            $('#amount').val("");
-            $('#slect_shop').val(-1);
-            swal("Success", message, "successs");
-          } else {
-            swal("Oops", message, "error");
+      if (validateForm(amount, shopId)) {
+        data.amount = amount;
+        data.shopId = shopId;
+        data.distributorId = distributorId;
+        console.log(JSON.stringify(data));
+        $.ajax({
+          type: 'POST',
+          data: JSON.stringify(data), //input data to be sent to the server
+          contentType: 'application/json; charset=utf-8',
+          dataType: "json",
+          url: url,
+          success: function(res) {
+            console.log('success');
+            console.log(res);
+            var statusCode = res.statusCode
+            var message = res.message
+            var status = res.status
+            console.log("Message" + message);
+            console.log("status" + status);
+            console.log("statusCode" + statusCode);
+            if (statusCode == "200") {
+              LoadDataDromDb();
+              $('#shopId').val("");
+              $('#amount').val("");
+              $('#slect_shop').val("Select shop");
+              swal("Success", message, "successs");
+            } else {
+              swal("Oops", message, "error");
+            }
+          },
+          error: function() {
+            console.log("Device control failed");
           }
-        },
-        error: function() {
-          console.log("Device control failed");
-        }
-      });
+        });
+      }
     });
 
 
@@ -525,9 +542,9 @@
                         <span>
                           <div class="input-group">
                             <div class="input-group-prepend">
-                              <span class="input-group-text">$</span>
+                              <span class="input-group-text">₹</span>
                             </div>
-                            <input type="text" id="amount" class="form-control" aria-label="Amount (to the nearest dollar)">
+                            <input type="number" id="amount" class="form-control" aria-label="Amount (to the nearest dollar)">
                             <div class="input-group-append">
                               <span class="input-group-text">.00</span>
                             </div>
