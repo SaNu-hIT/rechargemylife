@@ -56,6 +56,10 @@ const RechargeSchema = mongoose.Schema({
     type: Boolean,
     required: false
   },
+  transactionId: {
+    type: String,
+    required: false
+  },
   date: {
     type: Date,
     default: Date.now()
