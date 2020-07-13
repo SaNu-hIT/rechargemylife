@@ -17,6 +17,43 @@ const Wallet = require("../model/wallet");
  * @param - /signup
  * @description - User SignUp
  */
+
+
+
+router.post(
+  "/gettransactionadmin",
+  [
+
+  ],
+  async (req, res) => {
+
+    const {
+      distributorId
+    } = req.body;
+    try {
+
+      let transactions = await Transaction.find({
+        distributorId
+      }).sort({
+        date: -1
+      });
+
+      res.status(200).json({
+        Data: {
+          transactions
+        },
+        Message: "Transation get success",
+        Status: "1000",
+        Token: "tokkens"
+      });
+
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send("Error getting data ");
+    }
+  }
+);
+
 router.post(
   "/gettransactions",
   [

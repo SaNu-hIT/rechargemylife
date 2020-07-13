@@ -14,22 +14,18 @@
 <script>
   function LoadDataDromDb() {
     var data = {};
-    var distributorId = user_id
+    var distributorId = "5f01bb499cb85c32bc3f3be5"
     data.distributorId = distributorId;
     $.ajax({
       type: 'POST',
       data: JSON.stringify(data), //input data to be sent to the server
       contentType: 'application/json; charset=utf-8',
       dataType: "json",
-      url: "/shop/getshopBydistributor",
+      url: "/transactions/gettransactionadmin",
       success: function(res) {
         console.log('success');
         console.log(res);
-        var statusCode = res.statusCode
-        var status = res.status
-        console.log("status" + status);
-        console.log("statusCode" + statusCode);
-        if (statusCode == "200") {
+        if (res.Status == "1000") {
           updateDataTable(res)
         }
 
@@ -47,10 +43,10 @@
   function updateDataTable(dataAsJsonArry) {
 
 
-    var shopNumber = dataAsJsonArry.data.length
+    var shopNumber = dataAsJsonArry.Data.transactions.length
     $('#shop_number').text(shopNumber);
 
-    console.log(dataAsJsonArry.data);
+    console.log(dataAsJsonArry.Data);
     if (mytable)
       mytable.destroy();
 
@@ -60,21 +56,27 @@
       destory: true,
       bRetrieve: true,
       searching: true,
-      data: dataAsJsonArry.data,
+      data: dataAsJsonArry.Data.transactions,
       columns: [{
-          data: "username"
+          data: "date"
+        }, {
+          data: "recipientPhone"
         },
         {
-          data: "phone"
+          data: "operatorName"
         },
         {
-          data: "password"
+          data: "amount"
         },
         {
-          data: "distributorId"
+          data: "senderPhone"
         },
         {
-          data: "commision"
+          data: "success"
+        }, {
+          data: "discount"
+        }, {
+          data: "transactionId"
         }
       ]
 
@@ -99,71 +101,6 @@
     mytable = null;
     LoadDataDromDb();
     console.log("document ready");
-    $("#addshops").click(function(e) {
-      e.preventDefault();
-      console.log("click done");
-      url = "/shop/createshops"
-      console.log(url);
-      var data = {};
-      var username = $('#name').val();
-      var password = $('#password').val();
-      var phone = $('#phone').val();
-      var commision = $('#commision').val();
-      var pincode = $('#pincode').val();
-      var distributorId = user_id
-      var shopId = $('#shopId').val();
-      data.username = username; //input
-      data.password = password; //input
-      data.phone = phone; //input
-      data.distributorId = distributorId; //input
-      data.pincode = pincode; //input
-      data.commision = commision;
-      data._id = shopId; //input
-      console.log(JSON.stringify(data));
-      $.ajax({
-        type: 'POST',
-        data: JSON.stringify(data), //input data to be sent to the server
-        contentType: 'application/json; charset=utf-8',
-        dataType: "json",
-        url: url,
-        success: function(res) {
-          console.log('success');
-          console.log(res);
-          var statusCode = res.statusCode
-          var message = res.message
-          var status = res.status
-          console.log("Message" + message);
-          console.log("status" + status);
-          console.log("statusCode" + statusCode);
-          if (statusCode == "200") {
-            LoadDataDromDb();
-            $('#name').val("");
-            $('#password').val("");
-            $('#phone').val("");
-            $('#commision').val("");
-            $('#pincode').val("");
-            swal("Success", message, "successs");
-          } else {
-
-            swal("Oops", message, "error");
-
-          }
-
-
-        },
-        error: function() {
-          console.log("Device control failed");
-        }
-      });
-    });
-
-
-
-
-
-
-
-
   });
 </script>
 
@@ -268,7 +205,7 @@
         <!-- Navigation -->
         <ul class="navbar-nav">
           <li class="nav-item  active ">
-            <a class="nav-link  active " href="/ddash">
+            <a class="nav-link  active " href="/adash">
               <i class="ni ni-tv-2 text-primary"></i> Dashboard
             </a>
           </li>
@@ -279,12 +216,12 @@
           </li>
           <li class="nav-item">
             <a class="nav-link active" href="/adddistributor">
-              <i class="ni ni-badge"></i> Transactions
+              <i class="ni ni-badge"></i> Operator
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" href="/adddistributor">
-              <i class="ni ni-badge"></i> Config
+            <a class="nav-link active" href="/addPlans">
+              <i class="ni ni-badge"></i> Plans
             </a>
           </li>
         </ul>
@@ -385,7 +322,7 @@
                 <div class="card-body">
                   <div class="row">
                     <div class="col">
-                      <h5 class="card-title text-uppercase text-muted mb-0">SHOPS</h5>
+                      <h5 class="card-title text-uppercase text-muted mb-0">^TRANSACTIONS</h5>
                       <span class="h2 font-weight-bold mb-0" id="shop_number"></span>
                     </div>
                     <div class="col-auto">
@@ -464,11 +401,14 @@
               <table id="shopsDatatable" cellspacing="0" width="100%" class="table align-items-center table-flush">
                 <thead class="thead-light">
                   <tr>
-                    <th scope="col">Name</th>
+                    <th scope="col">Date</th>
                     <th scope="col">Phone</th>
-                    <th scope="col">Password</th>
-                    <th scope="col">ID</th>
-                    <th scope="col">Commision</th>
+                    <th scope="col">OPERATOR</th>
+                    <th scope="col">AMOUNT</th>
+                    <th scope="col">SHOP</th>
+                    <th scope="col">SUCCESS</th>
+                    <th scope="col">COMMISION</th>
+                    <th scope="col">TRANSACTION ID</th>
                   </tr>
                 </thead>
                 <tbody>

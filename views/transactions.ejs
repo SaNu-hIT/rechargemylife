@@ -10,14 +10,18 @@
   <% include /header.ejs%>
 </head>
 <script>
+  var shopCommision
+
   function LoadDataDromDb() {
     var data = {};
+    var distributorId = user_id
+    data.distributorId = distributorId;
     $.ajax({
       type: 'POST',
       data: JSON.stringify(data), //input data to be sent to the server
       contentType: 'application/json; charset=utf-8',
       dataType: "json",
-      url: "/distributor/getdistributors",
+      url: "/shop/getshopBydistributor",
       success: function(res) {
         console.log('success');
         console.log(res);
@@ -28,8 +32,6 @@
         if (statusCode == "200") {
           updateDataTable(res)
         }
-
-
       },
       error: function() {
         console.log("Device control failed");
@@ -58,9 +60,12 @@
         {
           data: "phone"
         },
-        {
-          data: "password"
-        },
+        // {
+        //   data: "password"
+        // },
+        // {
+        //   data: "distributorId"
+        // },
         {
           data: "commision"
         },
@@ -68,8 +73,8 @@
           data: null,
           render: function(data, row, type) {
             var html = '<div role="group" aria-label="Basic example" class="btn-group btn-group-sm alignclass">';
-            html += '<button type="button" data_id=' + data._id + ' class="btnEdit btn btn-outline-success"><i class="ti-pencil"></i></button>';
-            html += '<button type="button" data_id=' + data._id + '  class="btnDelete btn btn-outline btn-danger"><i class="ti-trash"></i></button>';
+            html += '<button type="button" data_id=' + data._id + ' class="btnEdit btn btn-outline-success"><i class="ni ni-ruler-pencil"></i></button>';
+            html += '<button type="button" data_id=' + data._id + '  class="btnDelete btn btn-outline-danger  "><i class="ni ni-basket"></i></button>';
             html += '</div>';
             return html;
           },
@@ -86,169 +91,23 @@
 
 
 
+  var user_id
+
+  var phone
 
   $(document).ready(function() {
+
+
+    user_id = Cookies.get('user_id');
+    phone = Cookies.get('phone');
+
+    console.log("user_id");
+    console.log(user_id);
+    console.log("phone");
+    console.log(phone);
     mytable = null;
+
     LoadDataDromDb();
-    console.log("document ready");
-    $("#addshops").click(function(e) {
-      e.preventDefault();
-      console.log("click done");
-      url = "/distributor/createdistributor"
-      console.log(url);
-      var data = {};
-      var username = $('#name').val();
-      var password = $('#password').val();
-      var phone = $('#phone').val();
-      var commision = $('#commision').val();
-      var distributorId = $('#shopId').val();
-      data.username = username; //input
-      data.password = password; //input
-      data.phone = phone; //input
-      data.commision = commision;
-      data.distributorId = distributorId; //input
-      console.log(JSON.stringify(data));
-      $.ajax({
-        type: 'POST',
-        data: JSON.stringify(data), //input data to be sent to the server
-        contentType: 'application/json; charset=utf-8',
-        dataType: "json",
-        url: url,
-        success: function(res) {
-          console.log('success');
-          console.log(res);
-          var statusCode = res.statusCode
-          var message = res.message
-          var status = res.status
-          console.log("Message" + message);
-          console.log("status" + status);
-          console.log("statusCode" + statusCode);
-          if (statusCode == "200") {
-            LoadDataDromDb();
-            $('#name').val("");
-            $('#password').val("");
-            $('#phone').val("");
-            $('#commision').val("");
-            $('#shopId').val("");
-            swal("Success", message, "successs");
-          } else {
-
-            swal("Oops", message, "error");
-
-          }
-
-
-        },
-        error: function() {
-          console.log("Device control failed");
-        }
-      });
-    });
-
-
-
-
-
-
-
-    $(document).on('click', '.btnEdit', function() {
-      var id = $(this).attr('data_id');
-      console.log("DATA ID" + id);
-      url = "/distributor/getdistributor"
-      console.log(url);
-      var data = {};
-      data.distributorId = id;
-      console.log(JSON.stringify(data));
-      $.ajax({
-        type: 'POST',
-        data: JSON.stringify(data), //input data to be sent to the server
-        contentType: 'application/json; charset=utf-8',
-        dataType: "json",
-        url: url,
-        success: function(res) {
-          console.log('success');
-          console.log(res);
-          var statusCode = res.statusCode
-          var message = res.message
-          var status = res.status
-          console.log("Message" + message);
-          console.log("status" + status);
-          console.log("statusCode" + statusCode);
-          if (statusCode == "200") {
-            $('#name').val(res.data.username);
-            $('#password').val(res.data.password);
-            $('#phone').val(res.data.phone);
-            $('#commision').val(res.data.commision);
-            $('#shopId').val(res.data._id);
-            $('#addshops').text("UPDATE");
-
-          } else {
-            swal("Oops", message, "error");
-          }
-        },
-        error: function() {
-          console.log("Device control failed");
-        }
-      });
-    });
-    $(document).on('click', '.btnDelete', function() {
-      var id = $(this).attr('data_id');
-      console.log("DATA ID" + id);
-      url = "/distributor/deleteDistriutorbyId"
-      console.log(url);
-      var data = {};
-      data.distributorId = id; //input
-      console.log(JSON.stringify(data));
-      swal({
-          title: "Are you sure?",
-          text: "You will not be able to recover this category !",
-          type: "warning",
-          showCancelButton: true,
-          confirmButtonColor: '#DD6B55',
-          confirmButtonText: 'Yes, I am sure!',
-          cancelButtonText: "No, cancel it!",
-          closeOnConfirm: false,
-          closeOnCancel: false
-        },
-        function(isConfirm) {
-          if (isConfirm) {
-            $.ajax({
-              type: 'POST',
-              data: JSON.stringify(data), //input data to be sent to the server
-              contentType: 'application/json; charset=utf-8',
-              dataType: "json",
-              url: url,
-              success: function(res) {
-                console.log('success');
-                console.log(res);
-                var statusCode = res.statusCode
-                var message = res.message
-                var status = res.status
-                console.log("Message" + message);
-                console.log("status" + status);
-                console.log("statusCode" + statusCode);
-                if (statusCode == "200") {
-                  LoadDataDromDb();
-                  swal({
-                    title: "Success!",
-                    text: "You have deleted the user !",
-                    icon: "success",
-                    button: "Close",
-                  });
-                } else {
-                  swal("Oops", message, "error");
-                }
-              },
-              error: function() {
-                console.log("Device control failed");
-              }
-            });
-          } else {
-            swal("Cancelled", "Click ok to close");
-            e.preventDefault();
-          }
-        });
-    });
   });
 </script>
 
@@ -319,7 +178,7 @@
         <div class="navbar-collapse-header d-md-none">
           <div class="row">
             <div class="col-6 collapse-brand">
-              <a href="./ddash">
+              <a href="./index.html">
                 <img src="./img/brand/blue.png">
               </a>
             </div>
@@ -345,25 +204,24 @@
         <!-- Navigation -->
         <ul class="navbar-nav">
           <li class="nav-item   ">
-            <a class="nav-link  active " href="/adash">
+            <a class="nav-link " href="/ddash">
               <i class="ni ni-tv-2 text-primary"></i> Dashboard
             </a>
           </li>
-          <li class="nav-item active">
-            <a class="nav-link active" href="/adddistributor">
-              <i class="ni ni-badge"></i> Distributors
+
+          <li class="nav-item ">
+            <a class="nav-link active" href="/addshops">
+              <i class="ni ni-bullet-list-67 text-red"></i> Shops
             </a>
           </li>
+
           <li class="nav-item">
-            <a class="nav-link active" href="/adddistributor">
-              <i class="ni ni-badge"></i> Transactions
+            <a class="nav-link" href="/addwallet">
+              <i class="ni ni-circle-08 text-pink"></i> Add Wallet amount
             </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link active" href="/addPlans">
-              <i class="ni ni-badge"></i> Plans
-            </a>
-          </li>
+
+
         </ul>
         <!-- Divider -->
         <hr class="my-3">
@@ -378,7 +236,11 @@
     <nav class="navbar navbar-top navbar-expand-md navbar-dark" id="navbar-main">
       <div class="container-fluid">
         <!-- Brand -->
-        <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="/shops">ADD DISTIBUTOR</a>
+        <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="/shops">ADD SHOPS</a>
+        <!-- Form -->
+
+        <!-- User -->
+
       </div>
     </nav>
     <!-- End Navbar -->
@@ -416,18 +278,28 @@
                             <div class="input-group-prepend">
                               <span class="input-group-text">Phone</span>
                             </div>
-                            <input type="text" id="phone" aria-label="Name" class="form-control">
+                            <input type="number" id="phone" aria-label="Phone" class="form-control">
                           </div>
 
                         </span>
                       </div>
+                      <div class="col-sm">
+                        <span>
+                          <div class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text">PinCode</span>
+                            </div>
+                            <input type="number" id="pincode" aria-label="pincode" class="form-control">
+                          </div>
 
+                        </span>
+                      </div>
                     </div>
                   </div>
 
                 </div>
 
-                <div class="w-100"></div>
+                <div class="mt-3 mb-0 h-100"></div>
 
                 <div class="row">
                   <div class="container">
@@ -448,10 +320,10 @@
                       <div class="col-sm">
                         <span>
                           <div class="input-group">
-                            <input type="text" id="commision" class="form-control" aria-label="Commision">
+                            <input type="number" id="commision" class="form-control" aria-label="Commision">
                             <div class="input-group-append">
                               <span class="input-group-text">%</span>
-                              <span class="input-group-text">4</span>
+                              <span id="distributor_commision" class="input-group-text"></span>
                             </div>
                           </div>
                         </span>
@@ -459,6 +331,7 @@
                       <div class="col-sm">
                         <span>
                           <button type="button" id="addshops" class="btn btn-success btn-lg btn-block">SAVE</button>
+
                         </span>
                       </div>
                     </div>
@@ -498,7 +371,8 @@
                   <tr>
                     <th scope="col">Name</th>
                     <th scope="col">Phone</th>
-                    <th scope="col">Password</th>
+                    <!-- <th scope="col">Password</th>
+                    <th scope="col">ID</th> -->
                     <th scope="col">Commision</th>
                     <th scope="col">Action</th>
                   </tr>

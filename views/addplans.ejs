@@ -12,23 +12,24 @@
 <script>
   function LoadDataDromDb() {
     var data = {};
+
+    console.log("LoadDataDromDb");
     $.ajax({
       type: 'POST',
       data: JSON.stringify(data), //input data to be sent to the server
       contentType: 'application/json; charset=utf-8',
       dataType: "json",
-      url: "/distributor/getdistributors",
+      url: "/operators/getPlans",
       success: function(res) {
         console.log('success');
         console.log(res);
-        var statusCode = res.statusCode
-        var status = res.status
-        console.log("status" + status);
-        console.log("statusCode" + statusCode);
-        if (statusCode == "200") {
+        var statusCode = res.Message
+        var Status = res.Status
+        console.log("Status" + Status);
+
+        if (Status == "1000") {
           updateDataTable(res)
         }
-
 
       },
       error: function() {
@@ -41,28 +42,32 @@
   var mytable;
 
   function updateDataTable(dataAsJsonArry) {
-    console.log(dataAsJsonArry.data);
+    console.log(dataAsJsonArry.Data);
     if (mytable)
       mytable.destroy();
-
     mytable = $('#shopsDatatable').DataTable({
       destory: true,
       "scrollX": true,
       destory: true,
       bRetrieve: true,
       searching: true,
-      data: dataAsJsonArry.data,
+      data: dataAsJsonArry.Data.plans,
       columns: [{
-          data: "username"
+          data: "operator"
         },
         {
-          data: "phone"
+          data: "Plan_type"
         },
         {
-          data: "password"
+          data: "Description"
         },
         {
-          data: "commision"
+          data: "Price"
+        },
+        {
+          data: "Validity"
+        }, {
+          data: "Talktime"
         },
         {
           data: null,
@@ -94,14 +99,18 @@
     $("#addshops").click(function(e) {
       e.preventDefault();
       console.log("click done");
-      url = "/distributor/createdistributor"
+      url = "/operators/addPlans"
       console.log(url);
+
       var data = {};
-      var username = $('#name').val();
-      var password = $('#password').val();
-      var phone = $('#phone').val();
-      var commision = $('#commision').val();
-      var distributorId = $('#shopId').val();
+
+      var Price = $('#Price').val();
+      var operator = $('#operator').val();
+      var Description = $('#Description').val();
+      var Validity = $('#Validity').val();
+      var Talktime = $('#Talktime').val();
+      var Plan_type = $('#Plan_type').val();
+
       data.username = username; //input
       data.password = password; //input
       data.phone = phone; //input
@@ -125,11 +134,12 @@
           console.log("statusCode" + statusCode);
           if (statusCode == "200") {
             LoadDataDromDb();
-            $('#name').val("");
-            $('#password').val("");
-            $('#phone').val("");
-            $('#commision').val("");
-            $('#shopId').val("");
+            $('#Price').val("");
+            $('#operator').val("");
+            $('#Description').val("");
+            $('#Validity').val("");
+            $('#Talktime').val("");
+            $('#Plan_type').val("");
             swal("Success", message, "successs");
           } else {
 
@@ -349,7 +359,7 @@
               <i class="ni ni-tv-2 text-primary"></i> Dashboard
             </a>
           </li>
-          <li class="nav-item active">
+          <li class="nav-item ">
             <a class="nav-link active" href="/adddistributor">
               <i class="ni ni-badge"></i> Distributors
             </a>
@@ -359,7 +369,7 @@
               <i class="ni ni-badge"></i> Transactions
             </a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item active">
             <a class="nav-link active" href="/addPlans">
               <i class="ni ni-badge"></i> Plans
             </a>
@@ -378,7 +388,7 @@
     <nav class="navbar navbar-top navbar-expand-md navbar-dark" id="navbar-main">
       <div class="container-fluid">
         <!-- Brand -->
-        <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="/shops">ADD DISTIBUTOR</a>
+        <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="/shops">ADD Plans</a>
       </div>
     </nav>
     <!-- End Navbar -->
@@ -395,6 +405,8 @@
                 <div class="row">
 
 
+
+
                   <div class="container">
                     <div class="row">
                       <div class="col-sm">
@@ -402,9 +414,31 @@
 
                           <div class="input-group">
                             <div class="input-group-prepend">
-                              <span class="input-group-text">Name</span>
+                              <span class="input-group-text">Plan type</span>
                             </div>
-                            <input type="text" id="name" aria-label="Name" class="form-control">
+                            <input type="text" id="Plan_type" aria-label="Plan_type" class="form-control">
+                          </div>
+
+
+                        </span>
+                        <span>
+
+                          <div class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text">Price</span>
+                            </div>
+                            <input type="text" id="Price" aria-label="Price" class="form-control">
+                          </div>
+
+
+                        </span>
+                        <span>
+
+                          <div class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text">Talktime</span>
+                            </div>
+                            <input type="text" id="Talktime" aria-label="Talktime " class="form-control">
                           </div>
 
 
@@ -414,9 +448,9 @@
                         <span>
                           <div class="input-group">
                             <div class="input-group-prepend">
-                              <span class="input-group-text">Phone</span>
+                              <span class="input-group-text">operator</span>
                             </div>
-                            <input type="text" id="phone" aria-label="Name" class="form-control">
+                            <input type="text" id="operator" aria-label="operator" class="form-control">
                           </div>
 
                         </span>
@@ -436,10 +470,10 @@
                         <span>
                           <div class="input-group">
                             <div class="input-group-prepend">
-                              <span class="input-group-text">Password</span>
+                              <span class="input-group-text">Description</span>
                               <p hidden> <input type="text" id="shopId" aria-label="shopId" class="form-control"></p>
                             </div>
-                            <input type="text" id="password" aria-label="Password" class="form-control">
+                            <input type="text" id="Description" aria-label="Description" class="form-control">
                           </div>
 
 
@@ -448,11 +482,11 @@
                       <div class="col-sm">
                         <span>
                           <div class="input-group">
-                            <input type="text" id="commision" class="form-control" aria-label="Commision">
-                            <div class="input-group-append">
-                              <span class="input-group-text">%</span>
-                              <span class="input-group-text">4</span>
+                            <div class="input-group-prepend">
+                              <span class="input-group-text">Validity</span>
+                              <p hidden> <input type="text" id="Validity" aria-label="shopId" class="form-control"></p>
                             </div>
+                            <input type="text" id="Validity" aria-label="Validity" class="form-control">
                           </div>
                         </span>
                       </div>
@@ -487,7 +521,7 @@
             <div class="card-header border-0">
               <div class="row align-items-center">
                 <div class="col">
-                  <h3 class="mb-0">ALL SHOPS</h3>
+                  <h3 class="mb-0">ALL Plans</h3>
                 </div>
               </div>
             </div>
@@ -496,10 +530,12 @@
               <table id="shopsDatatable" cellspacing="0" width="100%" class="table align-items-center table-flush">
                 <thead class="thead-light">
                   <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Phone</th>
-                    <th scope="col">Password</th>
-                    <th scope="col">Commision</th>
+                    <th scope="col">Operator</th>
+                    <th scope="col">Plan type</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Validity</th>
+                    <th scope="col">Talktime</th>
                     <th scope="col">Action</th>
                   </tr>
                 </thead>

@@ -60,6 +60,10 @@ const RechargeSchema = mongoose.Schema({
     type: String,
     required: false
   },
+  distributorId: {
+    type: String,
+    required: false
+  },
   date: {
     type: Date,
     default: Date.now()

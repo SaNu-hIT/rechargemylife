@@ -14,6 +14,7 @@ const fetch = require('node-fetch');
 const TokenSchema = require("../model/token");
 const refreshToken = require("../config/refreshToken");
 const WalletSchema = require("../model/wallet");
+const Shops = require("../model/shops");
 /**
  * @method - POST
  * @param - /signup
@@ -27,6 +28,7 @@ router.post(
   async (req, res) => {
     try {
       var access_ids = "recharge"
+      var distributorId
       var access_id = access_ids
       let token = await TokenSchema.findOne({
         access_id
@@ -48,7 +50,7 @@ router.post(
         logoUrl
       } = req.body;
       var success = false
-
+      var ObjectID = require('mongodb').ObjectID;
       console.log(shopId);
 
 
@@ -56,181 +58,212 @@ router.post(
         shopId
       });
 
+      var _id = shopId
 
-      if (wallet) {
-
-
-        console.log(wallet.wallet_balance);
-
-        if (amount < wallet.wallet_balance) {
-          if (token) {
-            var access_toke = "Bearer " + token.access_token
-            var url = 'https://topups-sandbox.reloadly.com/topups';
-            console.log(access_toke);
-            var headers = {
-              "Authorization": access_toke,
-              "Accept": "application/com.reloadly.topups-v1+json",
-              "Content-Type": "application/json"
-            }
+      let shops = await Shops.findOne({
+        _id
+      });
 
 
+      if (shops) {
+        distributorId = shops.distributorId
+        console.log("distributorId");
+        console.log(distributorId);
 
-            var body = JSON.stringify({
-              'recipientPhone': {
-                'countryCode': 'IN',
-                'number': recipientPhone
-              },
-              'senderPhone': {
-                'countryCode': 'IN',
-                'number': senderPhone
 
-              },
-              'operatorId': operatorId,
-              'amount': amount,
-              'useLocalAmount': 'false',
-              'customIdentifier': customIdentifier
-            });
+        if (wallet) {
 
-            console.log(body);
 
-            fetch(url, {
-                method: 'POST',
-                headers: headers,
-                body: body
-              })
-              .then((res) => {
-                return res.json()
-              })
-              .then((json) => {
-                console.log(json);
-                if (json.errorCode == "INVALID_TOKEN" || json.errorCode == "TOKEN_EXPIRED") {
-                  refreshToken()
-                  res.status(200).json({
-                    Data: {
-                      json
-                    },
-                    Message: "Invalid token",
-                    Status: "1100",
-                    Token: "tokkens"
-                  });
-                } else {
+          console.log(wallet.wallet_balance);
 
-                  var transactionId
-
-                  var recharge = new RechargeSchema({
-                    operatorId,
-                    operatorName,
-                    shopId,
-                    discount,
-                    amount,
-                    customIdentifier,
-                    recipientPhone,
-                    recipientCountryCode,
-                    recipientNumber,
-                    senderPhone,
-                    senderCountryCode,
-                    senderNumber,
-                    logoUrl,
-                    success,
-                    transactionId
-                  });
+          if (amount < wallet.wallet_balance) {
+            if (token) {
+              var access_toke = "Bearer " + token.access_token
+              var url = 'https://topups-sandbox.reloadly.com/topups';
+              console.log(access_toke);
+              var headers = {
+                "Authorization": access_toke,
+                "Accept": "application/com.reloadly.topups-v1+json",
+                "Content-Type": "application/json"
+              }
 
 
 
+              var body = JSON.stringify({
+                'recipientPhone': {
+                  'countryCode': 'IN',
+                  'number': recipientPhone
+                },
+                'senderPhone': {
+                  'countryCode': 'IN',
+                  'number': senderPhone
 
-
-                  recharge.success = true
-                  recharge.discount = json.discount
-                  recharge.transactionId = json.transactionId
-                  console.log(recharge);
-                  recharge.save();
-
-
-
-
-                  if (wallet) {
-                    // update wallet
-                    console.log("" + wallet.wallet_balance);
-                    var updatebalance = wallet.wallet_balance - json.requestedAmount
-                    console.log("" + json.requestedAmount);
-                    console.log(updatebalance);
-                    wallet.wallet_balance = updatebalance
-                    console.log(wallet.wallet_balance);
-
-                    console.log(wallet);
-
-                    wallet.remove();
-
-                    // WalletSchema.updateOne({
-                    //   shopId: shopId
-                    // }, {
-                    //   $set: {
-                    //     wallet_balance: updatebalance
-                    //   }
-                    // });
-
-
-
-                    let wallet_amount = wallet.wallet_amount
-                    let wallet_balance = updatebalance
-                    let phone = wallet.phone
-                    let distributorId = wallet.distributorId
-
-                    let upwallet = new WalletSchema({
-                      shopId,
-                      wallet_amount,
-                      wallet_balance,
-                      distributorId,
-                      phone
-                    });
-                    console.log("SAVE");
-                    upwallet.save();
-
-
-
-                  }
-
-                  res.status(200).json({
-                    Data: {
-                      json
-                    },
-                    Message: "Topup success",
-                    Status: "1000",
-                    Token: "tokkens"
-                  });
-                }
+                },
+                'operatorId': operatorId,
+                'amount': amount,
+                'useLocalAmount': 'false',
+                'customIdentifier': customIdentifier
               });
 
+              console.log(body);
+
+              fetch(url, {
+                  method: 'POST',
+                  headers: headers,
+                  body: body
+                })
+                .then((res) => {
+                  return res.json()
+                })
+                .then((json) => {
+                  console.log(json);
+                  if (json.errorCode == "INVALID_TOKEN" || json.errorCode == "TOKEN_EXPIRED" || json.errorCode == "CUSTOM_IDENTIFIER_ALREADY_USED" || json.errorCode == "INSUFFICIENT_BALANCE") {
+                    refreshToken()
+                    res.status(200).json({
+                      Data: {
+                        json
+                      },
+                      Message: json.message,
+                      Status: "1100",
+                      Token: "tokkens"
+                    });
+                  } else if (json.transactionId) {
+
+                    var transactionId
+                    var recharge = new RechargeSchema({
+                      operatorId,
+                      operatorName,
+                      shopId,
+                      discount,
+                      amount,
+                      customIdentifier,
+                      recipientPhone,
+                      recipientCountryCode,
+                      recipientNumber,
+                      senderPhone,
+                      senderCountryCode,
+                      senderNumber,
+                      logoUrl,
+                      success,
+                      transactionId,
+                      distributorId
+                    });
+
+
+
+
+
+                    recharge.success = true
+                    recharge.discount = json.discount
+                    recharge.transactionId = json.transactionId
+                    console.log(recharge);
+                    recharge.save();
+
+
+
+
+                    if (wallet) {
+                      // update wallet
+                      console.log("" + wallet.wallet_balance);
+                      var updatebalance = wallet.wallet_balance - json.requestedAmount
+                      console.log("" + json.requestedAmount);
+                      console.log(updatebalance);
+                      wallet.wallet_balance = updatebalance
+                      console.log(wallet.wallet_balance);
+                      console.log(wallet);
+                      console.log(wallet._id);
+                      // wallet.remove();
+
+                      var myquery = {
+                        _id: ObjectID(wallet._id)
+                      };
+                      var newvalues = {
+                        $set: {
+                          wallet_balance: updatebalance
+                        }
+                      };
+
+                      WalletSchema.updateOne(myquery, newvalues, function(err, res) {
+                        if (err) throw err;
+                        console.log("1 document updated");
+                        console.log(res);
+                      });
+
+
+
+                    }
+
+                    res.status(200).json({
+                      Data: {
+                        json
+                      },
+                      Message: "Top up Success",
+                      Status: "1000",
+                      Token: "tokkens"
+                    });
+
+
+                  } else {
+
+                    res.status(200).json({
+                      Data: {
+                        json
+                      },
+                      Message: json.message,
+                      Status: "1001",
+                      Token: "tokkens"
+                    });
+                  }
+
+
+
+
+
+                });
+
+
+            } else {
+              refreshToken()
+              res.status(200).json({
+                Data: {},
+                Message: "Please try again",
+                Status: "1100",
+                Token: "tokkens"
+              });
+            }
 
           } else {
-            refreshToken()
+
             res.status(200).json({
               Data: {},
-              Message: "Token renewed try again",
-              Status: "1100",
+              Message: "Please add moneny to wallet",
+              Status: "1002",
               Token: "tokkens"
             });
+
           }
 
         } else {
-
           res.status(200).json({
             Data: {},
             Message: "Please add moneny to wallet",
-            Status: "1002",
+            Status: "1001",
             Token: "tokkens"
           });
-
         }
-
       } else {
         res.status(200).json({
           Data: {},
-          Message: "Please add moneny to wallet",
+          Message: "Please try again",
           Status: "1001",
           Token: "tokkens"
         });
       }
+
+
+
+
+
 
 
 

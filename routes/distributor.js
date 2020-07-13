@@ -83,6 +83,8 @@ router.post(
         user.username = username
         user.phone = phone
         user.commision = commision
+
+
         await Distributor.updateOne({
           _id: user._id
         }, {

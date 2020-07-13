@@ -84,6 +84,9 @@ app.get('/addwallet', function(req, res) {
 app.get('/adddistributor', function(req, res) {
   res.render('adddistributor.ejs');
 });
+app.get('/addPlans', function(req, res) {
+  res.render('addplans.ejs');
+});
 
 
 
