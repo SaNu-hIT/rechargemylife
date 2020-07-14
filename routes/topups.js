@@ -173,7 +173,6 @@ router.post(
                       console.log(wallet);
                       console.log(wallet._id);
                       // wallet.remove();
-
                       var myquery = {
                         _id: ObjectID(wallet._id)
                       };
@@ -182,17 +181,12 @@ router.post(
                           wallet_balance: updatebalance
                         }
                       };
-
                       WalletSchema.updateOne(myquery, newvalues, function(err, res) {
                         if (err) throw err;
                         console.log("1 document updated");
                         console.log(res);
                       });
-
-
-
                     }
-
                     res.status(200).json({
                       Data: {
                         json
@@ -201,8 +195,6 @@ router.post(
                       Status: "1000",
                       Token: "tokkens"
                     });
-
-
                   } else {
 
                     res.status(200).json({
