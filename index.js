@@ -61,10 +61,12 @@ app.get('/adash', function(req, res) {
 
 });
 
+app.get('/transactionsall', function(req, res) {
+  res.render('transactionsall.ejs');
 
+});
 
 // Distributor side
-
 app.get('/login', function(req, res) {
   res.render('login.ejs');
 });
@@ -87,9 +89,6 @@ app.get('/adddistributor', function(req, res) {
 app.get('/addPlans', function(req, res) {
   res.render('addplans.ejs');
 });
-
-
-
 app.listen(process.env.PORT || 3000, function() {
   console.log('listening on ports');
 });

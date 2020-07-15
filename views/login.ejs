@@ -35,19 +35,16 @@
           console.log("statusCode" + statusCode);
 
           if (statusCode == "200") {
-
             Cookies.set('user_id', res.userId)
             Cookies.set('phone', phone)
-
             window.location.href = "/ddash";
           } else {
             swal("Oops", message, "error");
-
           }
-
 
         },
         error: function() {
+          swal("Oops", "Please check internet connection", "error");
           console.log("Device control failed");
         }
       });
@@ -62,8 +59,8 @@
     <!-- Navbar -->
     <nav class="navbar navbar-top navbar-horizontal navbar-expand-md navbar-dark">
       <div class="container px-4">
-        <a class="navbar-brand" href="../index.html">
-          <img src="../assets/img/brand/white.png" />
+        <a class="navbar-brand" href="/">
+          <img src="./img/brand/white.png" />
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse-main" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -73,8 +70,8 @@
           <div class="navbar-collapse-header d-md-none">
             <div class="row">
               <div class="col-6 collapse-brand">
-                <a href="../index.html">
-                  <img src="../assets/img/brand/blue.png">
+                <a href="/">
+                  <img src="./img/brand/white.png">
                 </a>
               </div>
               <div class="col-6 collapse-close">
@@ -129,12 +126,7 @@
                       <input class="form-control" id="password" placeholder="Password" type="password">
                     </div>
                   </div>
-                  <div class="custom-control custom-control-alternative custom-checkbox">
-                    <input class="custom-control-input" id="customCheckLogin" type="checkbox">
-                    <label class="custom-control-label" for=" customCheckLogin">
-                      <span class="text-muted">Remember me</span>
-                    </label>
-                  </div>
+
                   <div class="text-center">
                     <button type="submit" id="login_button" type="" class="btn btn-primary my-4">Sign in</button>
                   </div>
