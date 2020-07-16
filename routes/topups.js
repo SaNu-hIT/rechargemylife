@@ -121,7 +121,7 @@ router.post(
                       Data: {
                         json
                       },
-                      Message: json.message,
+                      Message: json.errorCode,
                       Status: "1100",
                       Token: "tokkens"
                     });
