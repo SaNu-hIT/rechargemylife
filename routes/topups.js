@@ -80,15 +80,13 @@ router.post(
             if (token) {
               var access_toke = "Bearer " + token.access_token
               var url = 'https://topups-sandbox.reloadly.com/topups';
+              var liveurl = 'https://topups.reloadly.com/topups';
               console.log(access_toke);
               var headers = {
                 "Authorization": access_toke,
-                "Accept": "application/com.reloadly.topups-v1+json",
+                "Accept": liveurl,
                 "Content-Type": "application/json"
               }
-
-
-
               var body = JSON.stringify({
                 'recipientPhone': {
                   'countryCode': 'IN',
